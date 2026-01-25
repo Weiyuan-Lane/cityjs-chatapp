@@ -18,6 +18,9 @@ Run the following command to run the backend node + frontend service
 npm run start-e2e
 ```
 
+Note that you should use `gcloud auth application-default login` for running this locally in your system to associate with your Google Cloud account
+You also need to run `gcloud services enable aiplatform.googleapis.com` once at when running this project (or enable directly from Google Cloud)
+
 ## Production
 
 Build the docker image directly and push to production in cloud run!
