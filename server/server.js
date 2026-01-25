@@ -18,10 +18,8 @@ import generateAnswer from './homeworks/1-prompt-homework.js';
 app.post('/chat', async (req, res) => {
   try {
     const chatResponse = await generateAnswer(req.body.message);
-    const parsedResponse = parse(chatResponse);
-    res.status(200).send({
-      message: parsedResponse,
-    });
+    chatResponse.message = parse(chatResponse.message);
+    res.status(200).send(chatResponse);
   } catch (e) {
     console.error(e);
     res.status(500).send('Internal Server Error');

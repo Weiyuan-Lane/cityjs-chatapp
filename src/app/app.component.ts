@@ -1,11 +1,11 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { HttpClient, HttpClientModule } from  '@angular/common/http';
+import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MessageInputComponent } from './message-input/message-input.component';
 import { MessagesComponent } from './messages/messages.component';
-import { Message } from '../types/message';
+import { Message, MessageMetadata } from '../types/message';
 
 
 @Component({
@@ -13,7 +13,6 @@ import { Message } from '../types/message';
   standalone: true,
   imports: [
     RouterOutlet,
-    HttpClientModule,
     MatProgressSpinnerModule,
     CommonModule,
     MessagesComponent,
@@ -31,7 +30,7 @@ export class AppComponent {
   public messages: Message[] = [];
   public loaderStatus: boolean = false;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {
   }
 
   public scrollBottom() {
@@ -49,19 +48,22 @@ export class AppComponent {
     });
 
     this.loaderStatus = true;
-    return this.http.post<{message: string}>('/chat', {
-      message: messageText
-    })
-    .subscribe((data) => {
-      this.loaderStatus = false;
-      this.messages.push({
-        content: data.message,
-        timestamp: new Date(),
-        self: false
+    return this.http
+      .post<{ message: string; metadata?: MessageMetadata }>('/chat', {
+        message: messageText,
+      })
+      .subscribe((data) => {
+        this.loaderStatus = false;
+        this.messages.push({
+          content: data.message,
+          timestamp: new Date(),
+          self: false,
+          metadata: data.metadata,
+        });
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.scrollBottom();
+        });
       });
-      setTimeout(() => {
-        this.scrollBottom();
-      });
-    });
   }
 }

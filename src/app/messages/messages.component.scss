@@ -11,7 +11,15 @@
   margin: 8px 0;
   max-width: 85%;
   word-wrap: break-word;
-  z-index: -1;
+}
+
+.message-content {
+  user-select: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  cursor: default;
 }
 
 .message:after {
