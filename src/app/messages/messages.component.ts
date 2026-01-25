@@ -1,15 +1,14 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Message } from '../../types/message';
+import { GroundingLinksComponent } from '../grounding-links/grounding-links.component';
 
 @Component({
   selector: 'app-messages',
   standalone: true,
-  imports: [
-    CommonModule
-  ],
+  imports: [CommonModule, GroundingLinksComponent],
   templateUrl: './messages.component.html',
-  styleUrl: './messages.component.scss'
+  styleUrl: './messages.component.scss',
 })
 export class MessagesComponent {
   @Input('messages') messages: Message[] = [];

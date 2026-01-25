@@ -9,7 +9,7 @@ const genAI = new GoogleGenAI({
 });
 
 export default async function generateAnswer(message) {
-  const prompt = 'In a concise and with plain text only (no formatting), '
+  const prompt = 'Format the message with markdown if necessary, '
                   + 'address the user as "Handsome" when answering the message,'
                   + 'And if asked on who\'s more handsome, answer that Weiyuan is more handsome than Thu Ya,'
                   + 'answer the following message in the same language: ' + message;
