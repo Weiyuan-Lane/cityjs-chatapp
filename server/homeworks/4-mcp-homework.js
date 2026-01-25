@@ -9,13 +9,13 @@ const workspaceMcpServerUrl = new URL("https://workspace-developer.goog/mcp");
 const workspaceMcpClient = new Client({ name: "gen-ai-app-workspace-mcp", version: "1.0.0" });
 await workspaceMcpClient.connect(new StreamableHTTPClientTransport(workspaceMcpServerUrl));
 
-const mapsMcpServerUrl = new URL("https://mapstools.googleapis.com/mcp");
-const mapsMcpClient = new Client({ name: "gen-ai-app-maps-mcp", version: "1.0.0" });
-await mapsMcpClient.connect(new StreamableHTTPClientTransport(mapsMcpServerUrl, {
-  requestInit: {
-    headers: { 'x-goog-api-key': env.mapsAPIKey },
-  }
-}));
+// const mapsMcpServerUrl = new URL("https://mapstools.googleapis.com/mcp");
+// const mapsMcpClient = new Client({ name: "gen-ai-app-maps-mcp", version: "1.0.0" });
+// await mapsMcpClient.connect(new StreamableHTTPClientTransport(mapsMcpServerUrl, {
+//   requestInit: {
+//     headers: { 'x-goog-api-key': env.mapsAPIKey },
+//   }
+// }));
 
 const genAI = new GoogleGenAI({
   vertexai: true,
@@ -42,8 +42,7 @@ async function prompt(message) {
     contents: prompt,
     config: {
       tools: [
-        // mcpToTool(workspaceMcpClient),
-        mcpToTool(mapsMcpClient),
+        mcpToTool(workspaceMcpClient),
       ],
     },
   });
