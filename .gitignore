@@ -40,3 +40,5 @@ Thumbs.db
 
 # Possible environment variables
 .env
+server/env.js
+
