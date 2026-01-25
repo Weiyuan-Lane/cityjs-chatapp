@@ -11,8 +11,8 @@ const app = express();
 app.use(express.json())
 const port = 8080;
 
-//import generateAnswer from './homework.js';
-import generateAnswer from './homeworks/3-grounding-homework.js';
+import generateAnswer from './homework.js';
+// import generateAnswer from './homeworks/1-prompt-homework.js';
 
 // Chat implementation
 app.post('/chat', async (req, res) => {
@@ -23,6 +23,41 @@ app.post('/chat', async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500).send('Internal Server Error');
+  }
+});
+
+// Streaming chat implementation using SSE
+app.post('/chat-stream', async (req, res) => {
+  // Set SSE headers
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no'); // Disable nginx buffering
+  res.flushHeaders();
+
+  try {
+    let accumulatedText = '';
+
+    for await (const chunk of generateAnswer(req.body.message)) {
+      if (chunk.type === 'text') {
+        accumulatedText += chunk.content;
+        // Send raw text chunk for real-time display
+        res.write(`data: ${JSON.stringify({ type: 'text', content: chunk.content })}\n\n`);
+      } else if (chunk.type === 'grounding') {
+        // Send grounding metadata
+        res.write(`data: ${JSON.stringify({ type: 'grounding', content: chunk.content })}\n\n`);
+      } else if (chunk.type === 'done') {
+        // Parse the complete markdown and send final message
+        const parsedContent = parse(accumulatedText);
+        res.write(`data: ${JSON.stringify({ type: 'done', content: parsedContent })}\n\n`);
+      }
+    }
+
+    res.end();
+  } catch (e) {
+    console.error(e);
+    res.write(`data: ${JSON.stringify({ type: 'error', content: 'Internal Server Error' })}\n\n`);
+    res.end();
   }
 });
 
