@@ -1,12 +1,10 @@
 {
-  "name": "chat-with-gemini",
+  "name": "cityjs-chatapp",
   "version": "1.0.0",
   "scripts": {
     "start-frontend": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:ssr:chat-with-gemini": "node dist/chat-with-gemini/server/server.mjs"
+    "start-e2e": "npm run build && cd server && npm install && node server.js"
   },
   "private": true,
   "dependencies": {
