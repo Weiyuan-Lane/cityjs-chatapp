@@ -12,7 +12,7 @@ app.use(express.json())
 const port = 8080;
 
 //import generateAnswer from './homework.js';
-import generateAnswer from './homeworks/1-prompt-homework.js';
+import generateAnswer from './homeworks/3-grounding-homework.js';
 
 // Chat implementation
 app.post('/chat', async (req, res) => {

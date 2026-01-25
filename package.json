@@ -4,7 +4,7 @@
   "scripts": {
     "start-frontend": "ng serve",
     "build": "ng build",
-    "start-e2e": "npm run build && cd server && npm install && node server.js"
+    "start-e2e": "npm run build && cd server && npm install && npm run watch"
   },
   "private": true,
   "dependencies": {

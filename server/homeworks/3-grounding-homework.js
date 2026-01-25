@@ -8,12 +8,16 @@ const genAI = new GoogleGenAI({
   location: env.location
 });
 
+const googleSearchTool = { googleSearch: {} };
+// const codeExecutionTool = { codeExecution: {} }; // See https://ai.google.dev/gemini-api/docs/code-execution for more details
+
 export default async function generateAnswer(message) {
   const aiResponse = await prompt(message);
   const grounding = generateGroundingData(aiResponse);
+  const responseMessage = generateResponseMessage(aiResponse);
 
   return {
-    message: aiResponse.candidates[0].content.parts[0].text,
+    message: responseMessage,
     metadata: { grounding },
   };
 };
@@ -25,13 +29,49 @@ async function prompt(message) {
     model: env.model,
     contents: prompt,
     // Google Search tool is enabled
-    config: { tools: [{ googleSearch: {}}]},
+    config: {
+      tools: [
+        googleSearchTool,
+        //codeExecutionTool,
+      ]
+    },
   });
 
   return aiResponse;
 }
 
+function generateResponseMessage(aiResponse) {
+  if (!aiResponse || !aiResponse.candidates || !aiResponse.candidates[0]) {
+    return '';
+  }
+
+  const markdownParts = [];
+
+  aiResponse.candidates[0].content.parts.forEach(part => {
+    if (part.text) {
+      // Regular text content
+      markdownParts.push(part.text);
+    } else if (part.executableCode) {
+      // Code that was executed
+      const lang = part.executableCode.language?.toLowerCase() || 'code';
+      markdownParts.push(`\`\`\`${lang}\n${part.executableCode.code}\`\`\``);
+    } else if (part.codeExecutionResult) {
+      // Result of code execution
+      const outcome = part.codeExecutionResult.outcome;
+      const output = part.codeExecutionResult.output || '';
+      const status = outcome === 'OUTCOME_OK' ? '✅ Output' : '❌ Error';
+      markdownParts.push(`**${status}:**\n\`\`\`\n${output}\`\`\``);
+    }
+  });
+
+  return markdownParts.join('\n\n---\n\n');
+}
+
 function generateGroundingData(aiResponse) {
+  if (!aiResponse || !aiResponse.candidates || !aiResponse.candidates[0]) {
+    return {};
+  }
+
   const grounding = aiResponse.candidates[0].groundingMetadata;
   let links = [];
 
