@@ -29,7 +29,7 @@ export class AppComponent {
 
   public messages: Message[] = [];
   public loaderStatus: boolean = false;
-  public useStreaming: boolean = true; // Toggle for streaming mode
+  public useStreaming: boolean = false; // Toggle for streaming mode
 
   constructor(
     private http: HttpClient,
