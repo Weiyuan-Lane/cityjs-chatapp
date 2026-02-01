@@ -24,3 +24,8 @@ You also need to run `gcloud services enable aiplatform.googleapis.com` once at 
 ## Production
 
 Build the docker image directly and push to production in cloud run!
+
+Here's an example of a `gcloud` command that should work:
+```
+gcloud run deploy cityjs-chatapp --source . --region=asia-southeast1 --allow-unauthenticated
+```
